@@ -1,0 +1,9 @@
+model,target,latency_ok,size_ok,process_mem_ok,fits_python_runtime,fits_model_only
+LogisticRegression,Cloud,True,True,True,True,True
+LogisticRegression,Edge,True,True,True,True,True
+LogisticRegression,Mobile,True,True,False,False,True
+LogisticRegression,TinyML,True,True,False,False,True
+RandomForest,Cloud,True,True,True,True,True
+RandomForest,Edge,True,True,True,True,True
+RandomForest,Mobile,True,True,False,False,True
+RandomForest,TinyML,True,False,False,False,False
