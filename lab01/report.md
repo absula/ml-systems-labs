@@ -95,15 +95,14 @@ inference memory exceeds 256 KB; it would need pruning (fewer/shallower trees) t
 
 ## 4. Conclusions
 
-1. On this dataset the cheaper model is also the better one: logistic regression has slightly higher
-   accuracy (0.9415 vs 0.9357), ~47× lower inference latency and a ~264× smaller file than the random forest.
-   A bigger model is not automatically a better system choice.
-2. For small tabular models the deployment constraint is the software stack, not the model: the Python process
-   takes ~265–280 MB while the models need between ~12 KB and ~0.5 MB. Measuring only process RSS would wrongly rule out
-   Mobile for both models, so it is important to separate runtime overhead from model footprint and to choose the
-   serving runtime together with the target.
-3. Measurement methodology matters: single-shot timings and coarse memory sampling gave noisy or meaningless numbers
-   (training time varied by ~50% between runs, and the first memory_profiler attempt captured only one sample), so medians
-   over repeated runs, isolated processes per model and fine-grained sampling are needed. Also, the specified
-   logistic regression does not converge on unscaled features — adding feature standardization would be the first fix
-   if I were allowed to change the baseline.
+1. I expected the random forest to win because it is the "stronger" model, but it didn't. Logistic regression
+   got a bit better accuracy (0.9415 vs 0.9357), and at the same time it predicts about 47 times faster and its
+   file is around 264 times smaller. So for this task the simple model is just the better choice overall.
+2. What surprised me most is that the model itself is not the problem for memory. The Python process with numpy,
+   sklearn and torch already takes around 265-280 MB, while the models themselves need somewhere between 12 KB and
+   0.5 MB. If I only looked at process RSS, I would say neither model can run on Mobile, which is not really true.
+   The runtime we use to serve the model matters as much as the model.
+3. Measuring things properly is harder than it looks. Training time changed by almost 50% between runs, and my
+   first try with memory_profiler basically caught one sample and showed nothing useful. That's why I used the median
+   over many runs, a separate process for each model and sampling every 1 ms. Also, logistic regression with the given
+   settings didn't converge on raw features, so if I could change the baseline I would add feature scaling first.
