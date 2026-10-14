@@ -1,0 +1,437 @@
+======================================================================
+Task 1: Dataset
+======================================================================
+X_train (1257, 64), X_test (540, 64)
+Y_train (1257, 10), Y_test (540, 10)
+X range: [0.00, 1.00]
+Train class counts: [124, 127, 124, 128, 127, 127, 127, 125, 122, 126]
+Test  class counts: [54, 55, 53, 55, 54, 55, 54, 54, 52, 54]
+
+======================================================================
+Task 2: Network design
+======================================================================
+W=16: W1(64, 16), b1(16,), W2(16, 16), b2(16,), W3(16, 10), b3(10,)  -> total params = 1482
+W=64: W1(64, 64), b1(64,), W2(64, 64), b2(64,), W3(64, 10), b3(10,)  -> total params = 8970
+
+======================================================================
+Task 3: Forward pass
+======================================================================
+W=16: output shape (32, 10), max |row_sum - 1| = 2.22e-16  -> PASS
+W=64: output shape (32, 10), max |row_sum - 1| = 3.33e-16  -> PASS
+
+======================================================================
+Task 4: Cross-entropy sanity check
+======================================================================
+W=16: untrained loss = 2.3026   (ln(10) = 2.3026, diff = 4.29e-07)
+W=64: untrained loss = 2.3026   (ln(10) = 2.3026, diff = 7.40e-06)
+
+======================================================================
+Task 5: Gradient check (eps = 1e-5, threshold 1e-6)
+======================================================================
+Relative error = |analytic - numeric| / (|analytic| + |numeric|), batch of 32.
+Checked on (a) the trained network (lr=0.1, 50 epochs) where gradients are
+~1e-3, and (b) at initialisation, where many gradients are ~1e-6 and the
+check hits the float64 round-off floor of the central difference
+(~ulp(loss)/(2*eps) = 4.4e-16/2e-5 = 2.2e-11 absolute).
+
+(a) W=16, trained network:
+  param index            analytic        numeric    rel_err
+  W1    (44, 3)     -1.233901e-03  -1.233901e-03   7.01e-09
+  W1    (33, 15)    -6.265877e-05  -6.265878e-05   3.20e-08
+  W3    (12, 7)     -4.441408e-04  -4.441408e-04   9.10e-09
+  W3    (8, 1)      -2.842346e-03  -2.842346e-03   8.94e-10
+  W2    (2, 14)      1.122061e-02   1.122061e-02   4.48e-10
+  W3    (10, 4)      2.533096e-02   2.533096e-02   2.64e-10
+  W3    (8, 4)       1.261546e-03   1.261546e-03   3.85e-09
+  W3    (13, 2)     -5.915942e-02  -5.915942e-02   1.05e-10
+  W2    (2, 12)     -1.116355e-03  -1.116355e-03   2.11e-09
+  W3    (5, 0)      -2.821631e-02  -2.821631e-02   6.42e-11
+  -> 10/10 below 1e-6: PASS
+
+(b) W=16, at initialisation N(0, 0.01):
+  param index            analytic        numeric    rel_err
+  W1    (49, 10)    -4.896577e-07  -4.896750e-07   1.77e-05
+  W1    (44, 3)      2.440764e-05   2.440765e-05   2.98e-07
+  W1    (33, 15)    -5.117262e-06  -5.117284e-06   2.18e-06
+  W3    (12, 7)      4.376629e-05   4.376628e-05   1.00e-07
+  W3    (8, 1)       3.154448e-05   3.154448e-05   1.07e-09
+  W3    (7, 5)      -2.082536e-06  -2.082534e-06   4.55e-07
+  W2    (2, 14)     -5.003917e-06  -5.003908e-06   8.21e-07
+  W3    (10, 4)      6.757371e-05   6.757370e-05   5.79e-08
+  W3    (8, 4)       6.431156e-05   6.431158e-05   1.66e-07
+  W3    (13, 2)     -7.140738e-05  -7.140739e-05   9.43e-08
+  -> 8/10 below 1e-6: diagnostic only
+     failures have |grad| <= 5.1e-06: round-off floor, not a bug
+
+(a) W=64, trained network:
+  param index            analytic        numeric    rel_err
+  W1    (49, 41)    -1.236963e-03  -1.236963e-03   8.71e-10
+  W2    (27, 54)     4.988533e-08   4.988510e-08   2.38e-06
+  W1    (44, 12)     1.003181e-02   1.003181e-02   2.87e-10
+  W1    (33, 62)    -2.493848e-05  -2.493848e-05   2.34e-08
+  W3    (48, 7)     -4.421414e-03  -4.421414e-03   1.52e-10
+  W3    (32, 1)      2.946612e-03   2.946612e-03   2.88e-10
+  W3    (28, 5)      2.174144e-03   2.174144e-03   4.47e-10
+  W2    (11, 59)    -7.017220e-03  -7.017220e-03   2.53e-10
+  W3    (41, 4)      1.096736e-02   1.096736e-02   1.02e-10
+  W3    (34, 4)      1.302925e-03   1.302925e-03   7.96e-10
+  -> 9/10 below 1e-6: PASS
+
+(b) W=64, at initialisation N(0, 0.01):
+  param index            analytic        numeric    rel_err
+  W1    (49, 41)    -6.957259e-06  -6.957235e-06   1.74e-06
+  W2    (27, 54)     6.366856e-05   6.366858e-05   2.06e-07
+  W1    (44, 12)    -2.139105e-05  -2.139104e-05   3.15e-08
+  W3    (48, 7)      1.870486e-05   1.870484e-05   6.11e-07
+  W3    (32, 1)      1.881688e-05   1.881690e-05   6.30e-07
+  W3    (28, 5)     -1.005190e-05  -1.005189e-05   1.66e-07
+  W2    (11, 59)    -3.448613e-06  -3.448597e-06   2.33e-06
+  W3    (41, 4)      5.219601e-05   5.219600e-05   6.96e-08
+  W3    (34, 4)      1.043790e-04   1.043790e-04   1.08e-07
+  W2    (14, 5)     -2.113386e-05  -2.113385e-05   1.29e-07
+  -> 8/10 below 1e-6: diagnostic only
+     failures have |grad| <= 7.0e-06: round-off floor, not a bug
+
+======================================================================
+Task 6: Training
+======================================================================
+  [W=16, lr=0.001] epoch  1/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch  2/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch  3/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch  4/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch  5/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch  6/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch  7/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch  8/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch  9/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 10/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 11/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 12/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 13/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 14/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 15/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 16/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 17/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 18/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 19/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 20/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 21/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 22/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 23/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 24/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 25/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 26/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 27/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 28/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 29/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 30/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 31/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 32/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 33/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 34/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 35/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 36/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 37/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 38/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 39/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 40/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 41/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 42/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 43/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 44/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 45/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 46/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 47/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 48/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 49/50  train_loss=2.3026  test_loss=2.3026
+  [W=16, lr=0.001] epoch 50/50  train_loss=2.3026  test_loss=2.3026
+  ==> W=16, lr=0.001: final test accuracy = 0.1019
+
+  [W=16, lr=0.01 ] epoch  1/50  train_loss=2.3027  test_loss=2.3026
+  [W=16, lr=0.01 ] epoch  2/50  train_loss=2.3027  test_loss=2.3026
+  [W=16, lr=0.01 ] epoch  3/50  train_loss=2.3027  test_loss=2.3026
+  [W=16, lr=0.01 ] epoch  4/50  train_loss=2.3027  test_loss=2.3026
+  [W=16, lr=0.01 ] epoch  5/50  train_loss=2.3027  test_loss=2.3026
+  [W=16, lr=0.01 ] epoch  6/50  train_loss=2.3027  test_loss=2.3026
+  [W=16, lr=0.01 ] epoch  7/50  train_loss=2.3027  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch  8/50  train_loss=2.3027  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch  9/50  train_loss=2.3027  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 10/50  train_loss=2.3027  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 11/50  train_loss=2.3027  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 12/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 13/50  train_loss=2.3027  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 14/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 15/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 16/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 17/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 18/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 19/50  train_loss=2.3027  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 20/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 21/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 22/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 23/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 24/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 25/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 26/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 27/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 28/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 29/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 30/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 31/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 32/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 33/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 34/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 35/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 36/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 37/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 38/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 39/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 40/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 41/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 42/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 43/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 44/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 45/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 46/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 47/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 48/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 49/50  train_loss=2.3026  test_loss=2.3025
+  [W=16, lr=0.01 ] epoch 50/50  train_loss=2.3026  test_loss=2.3025
+  ==> W=16, lr=0.01: final test accuracy = 0.1019
+
+  [W=16, lr=0.1  ] epoch  1/50  train_loss=2.3039  test_loss=2.3025
+  [W=16, lr=0.1  ] epoch  2/50  train_loss=2.3037  test_loss=2.3025
+  [W=16, lr=0.1  ] epoch  3/50  train_loss=2.3037  test_loss=2.3026
+  [W=16, lr=0.1  ] epoch  4/50  train_loss=2.3036  test_loss=2.3026
+  [W=16, lr=0.1  ] epoch  5/50  train_loss=2.3038  test_loss=2.3026
+  [W=16, lr=0.1  ] epoch  6/50  train_loss=2.3038  test_loss=2.3025
+  [W=16, lr=0.1  ] epoch  7/50  train_loss=2.3039  test_loss=2.3025
+  [W=16, lr=0.1  ] epoch  8/50  train_loss=2.3037  test_loss=2.3025
+  [W=16, lr=0.1  ] epoch  9/50  train_loss=2.3040  test_loss=2.3025
+  [W=16, lr=0.1  ] epoch 10/50  train_loss=2.3038  test_loss=2.3025
+  [W=16, lr=0.1  ] epoch 11/50  train_loss=2.3038  test_loss=2.3025
+  [W=16, lr=0.1  ] epoch 12/50  train_loss=2.3036  test_loss=2.3026
+  [W=16, lr=0.1  ] epoch 13/50  train_loss=2.3039  test_loss=2.3026
+  [W=16, lr=0.1  ] epoch 14/50  train_loss=2.3036  test_loss=2.3025
+  [W=16, lr=0.1  ] epoch 15/50  train_loss=2.3037  test_loss=2.3025
+  [W=16, lr=0.1  ] epoch 16/50  train_loss=2.3037  test_loss=2.3026
+  [W=16, lr=0.1  ] epoch 17/50  train_loss=2.3038  test_loss=2.3026
+  [W=16, lr=0.1  ] epoch 18/50  train_loss=2.3038  test_loss=2.3026
+  [W=16, lr=0.1  ] epoch 19/50  train_loss=2.3039  test_loss=2.3025
+  [W=16, lr=0.1  ] epoch 20/50  train_loss=2.3038  test_loss=2.3025
+  [W=16, lr=0.1  ] epoch 21/50  train_loss=2.3038  test_loss=2.3025
+  [W=16, lr=0.1  ] epoch 22/50  train_loss=2.3038  test_loss=2.3024
+  [W=16, lr=0.1  ] epoch 23/50  train_loss=2.3038  test_loss=2.3025
+  [W=16, lr=0.1  ] epoch 24/50  train_loss=2.3037  test_loss=2.3024
+  [W=16, lr=0.1  ] epoch 25/50  train_loss=2.3038  test_loss=2.3025
+  [W=16, lr=0.1  ] epoch 26/50  train_loss=2.3038  test_loss=2.3024
+  [W=16, lr=0.1  ] epoch 27/50  train_loss=2.3036  test_loss=2.3024
+  [W=16, lr=0.1  ] epoch 28/50  train_loss=2.3036  test_loss=2.3024
+  [W=16, lr=0.1  ] epoch 29/50  train_loss=2.3037  test_loss=2.3023
+  [W=16, lr=0.1  ] epoch 30/50  train_loss=2.3036  test_loss=2.3023
+  [W=16, lr=0.1  ] epoch 31/50  train_loss=2.3036  test_loss=2.3022
+  [W=16, lr=0.1  ] epoch 32/50  train_loss=2.3034  test_loss=2.3022
+  [W=16, lr=0.1  ] epoch 33/50  train_loss=2.3032  test_loss=2.3020
+  [W=16, lr=0.1  ] epoch 34/50  train_loss=2.3034  test_loss=2.3019
+  [W=16, lr=0.1  ] epoch 35/50  train_loss=2.3032  test_loss=2.3018
+  [W=16, lr=0.1  ] epoch 36/50  train_loss=2.3029  test_loss=2.3015
+  [W=16, lr=0.1  ] epoch 37/50  train_loss=2.3028  test_loss=2.3011
+  [W=16, lr=0.1  ] epoch 38/50  train_loss=2.3020  test_loss=2.3004
+  [W=16, lr=0.1  ] epoch 39/50  train_loss=2.3012  test_loss=2.2992
+  [W=16, lr=0.1  ] epoch 40/50  train_loss=2.2996  test_loss=2.2969
+  [W=16, lr=0.1  ] epoch 41/50  train_loss=2.2964  test_loss=2.2921
+  [W=16, lr=0.1  ] epoch 42/50  train_loss=2.2891  test_loss=2.2806
+  [W=16, lr=0.1  ] epoch 43/50  train_loss=2.2699  test_loss=2.2468
+  [W=16, lr=0.1  ] epoch 44/50  train_loss=2.2052  test_loss=2.1264
+  [W=16, lr=0.1  ] epoch 45/50  train_loss=2.0156  test_loss=1.8874
+  [W=16, lr=0.1  ] epoch 46/50  train_loss=1.8141  test_loss=1.7671
+  [W=16, lr=0.1  ] epoch 47/50  train_loss=1.7060  test_loss=1.7689
+  [W=16, lr=0.1  ] epoch 48/50  train_loss=1.6482  test_loss=1.6443
+  [W=16, lr=0.1  ] epoch 49/50  train_loss=1.5836  test_loss=1.8415
+  [W=16, lr=0.1  ] epoch 50/50  train_loss=1.5656  test_loss=1.6237
+  ==> W=16, lr=0.1: final test accuracy = 0.3259
+
+  [W=64, lr=0.001] epoch  1/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch  2/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch  3/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch  4/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch  5/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch  6/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch  7/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch  8/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch  9/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 10/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 11/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 12/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 13/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 14/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 15/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 16/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 17/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 18/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 19/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 20/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 21/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 22/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 23/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 24/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 25/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 26/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 27/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 28/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 29/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 30/50  train_loss=2.3026  test_loss=2.3026
+  [W=64, lr=0.001] epoch 31/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.001] epoch 32/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.001] epoch 33/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.001] epoch 34/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.001] epoch 35/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.001] epoch 36/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.001] epoch 37/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.001] epoch 38/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.001] epoch 39/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.001] epoch 40/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.001] epoch 41/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.001] epoch 42/50  train_loss=2.3025  test_loss=2.3025
+  [W=64, lr=0.001] epoch 43/50  train_loss=2.3025  test_loss=2.3025
+  [W=64, lr=0.001] epoch 44/50  train_loss=2.3025  test_loss=2.3025
+  [W=64, lr=0.001] epoch 45/50  train_loss=2.3025  test_loss=2.3025
+  [W=64, lr=0.001] epoch 46/50  train_loss=2.3025  test_loss=2.3025
+  [W=64, lr=0.001] epoch 47/50  train_loss=2.3025  test_loss=2.3025
+  [W=64, lr=0.001] epoch 48/50  train_loss=2.3025  test_loss=2.3025
+  [W=64, lr=0.001] epoch 49/50  train_loss=2.3025  test_loss=2.3025
+  [W=64, lr=0.001] epoch 50/50  train_loss=2.3025  test_loss=2.3025
+  ==> W=64, lr=0.001: final test accuracy = 0.1019
+
+  [W=64, lr=0.01 ] epoch  1/50  train_loss=2.3027  test_loss=2.3026
+  [W=64, lr=0.01 ] epoch  2/50  train_loss=2.3027  test_loss=2.3026
+  [W=64, lr=0.01 ] epoch  3/50  train_loss=2.3027  test_loss=2.3026
+  [W=64, lr=0.01 ] epoch  4/50  train_loss=2.3027  test_loss=2.3025
+  [W=64, lr=0.01 ] epoch  5/50  train_loss=2.3027  test_loss=2.3025
+  [W=64, lr=0.01 ] epoch  6/50  train_loss=2.3027  test_loss=2.3025
+  [W=64, lr=0.01 ] epoch  7/50  train_loss=2.3027  test_loss=2.3025
+  [W=64, lr=0.01 ] epoch  8/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.01 ] epoch  9/50  train_loss=2.3027  test_loss=2.3025
+  [W=64, lr=0.01 ] epoch 10/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.01 ] epoch 11/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.01 ] epoch 12/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.01 ] epoch 13/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.01 ] epoch 14/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.01 ] epoch 15/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.01 ] epoch 16/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.01 ] epoch 17/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.01 ] epoch 18/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.01 ] epoch 19/50  train_loss=2.3026  test_loss=2.3025
+  [W=64, lr=0.01 ] epoch 20/50  train_loss=2.3026  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 21/50  train_loss=2.3026  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 22/50  train_loss=2.3026  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 23/50  train_loss=2.3026  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 24/50  train_loss=2.3026  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 25/50  train_loss=2.3026  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 26/50  train_loss=2.3026  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 27/50  train_loss=2.3025  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 28/50  train_loss=2.3026  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 29/50  train_loss=2.3025  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 30/50  train_loss=2.3025  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 31/50  train_loss=2.3026  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 32/50  train_loss=2.3025  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 33/50  train_loss=2.3025  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 34/50  train_loss=2.3026  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 35/50  train_loss=2.3025  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 36/50  train_loss=2.3025  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 37/50  train_loss=2.3025  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 38/50  train_loss=2.3025  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 39/50  train_loss=2.3025  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 40/50  train_loss=2.3025  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 41/50  train_loss=2.3025  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 42/50  train_loss=2.3025  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 43/50  train_loss=2.3025  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 44/50  train_loss=2.3025  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 45/50  train_loss=2.3025  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 46/50  train_loss=2.3025  test_loss=2.3024
+  [W=64, lr=0.01 ] epoch 47/50  train_loss=2.3025  test_loss=2.3023
+  [W=64, lr=0.01 ] epoch 48/50  train_loss=2.3025  test_loss=2.3023
+  [W=64, lr=0.01 ] epoch 49/50  train_loss=2.3025  test_loss=2.3023
+  [W=64, lr=0.01 ] epoch 50/50  train_loss=2.3025  test_loss=2.3023
+  ==> W=64, lr=0.01: final test accuracy = 0.1019
+
+  [W=64, lr=0.1  ] epoch  1/50  train_loss=2.3038  test_loss=2.3025
+  [W=64, lr=0.1  ] epoch  2/50  train_loss=2.3037  test_loss=2.3025
+  [W=64, lr=0.1  ] epoch  3/50  train_loss=2.3036  test_loss=2.3025
+  [W=64, lr=0.1  ] epoch  4/50  train_loss=2.3035  test_loss=2.3025
+  [W=64, lr=0.1  ] epoch  5/50  train_loss=2.3037  test_loss=2.3025
+  [W=64, lr=0.1  ] epoch  6/50  train_loss=2.3037  test_loss=2.3024
+  [W=64, lr=0.1  ] epoch  7/50  train_loss=2.3038  test_loss=2.3023
+  [W=64, lr=0.1  ] epoch  8/50  train_loss=2.3035  test_loss=2.3022
+  [W=64, lr=0.1  ] epoch  9/50  train_loss=2.3037  test_loss=2.3022
+  [W=64, lr=0.1  ] epoch 10/50  train_loss=2.3035  test_loss=2.3022
+  [W=64, lr=0.1  ] epoch 11/50  train_loss=2.3034  test_loss=2.3021
+  [W=64, lr=0.1  ] epoch 12/50  train_loss=2.3031  test_loss=2.3020
+  [W=64, lr=0.1  ] epoch 13/50  train_loss=2.3033  test_loss=2.3018
+  [W=64, lr=0.1  ] epoch 14/50  train_loss=2.3028  test_loss=2.3016
+  [W=64, lr=0.1  ] epoch 15/50  train_loss=2.3026  test_loss=2.3012
+  [W=64, lr=0.1  ] epoch 16/50  train_loss=2.3022  test_loss=2.3007
+  [W=64, lr=0.1  ] epoch 17/50  train_loss=2.3017  test_loss=2.2999
+  [W=64, lr=0.1  ] epoch 18/50  train_loss=2.3006  test_loss=2.2985
+  [W=64, lr=0.1  ] epoch 19/50  train_loss=2.2987  test_loss=2.2957
+  [W=64, lr=0.1  ] epoch 20/50  train_loss=2.2947  test_loss=2.2895
+  [W=64, lr=0.1  ] epoch 21/50  train_loss=2.2851  test_loss=2.2735
+  [W=64, lr=0.1  ] epoch 22/50  train_loss=2.2569  test_loss=2.2213
+  [W=64, lr=0.1  ] epoch 23/50  train_loss=2.1584  test_loss=2.0439
+  [W=64, lr=0.1  ] epoch 24/50  train_loss=1.9293  test_loss=1.7967
+  [W=64, lr=0.1  ] epoch 25/50  train_loss=1.7222  test_loss=1.6299
+  [W=64, lr=0.1  ] epoch 26/50  train_loss=1.5785  test_loss=1.6594
+  [W=64, lr=0.1  ] epoch 27/50  train_loss=1.3217  test_loss=1.2547
+  [W=64, lr=0.1  ] epoch 28/50  train_loss=1.0970  test_loss=1.0900
+  [W=64, lr=0.1  ] epoch 29/50  train_loss=1.0124  test_loss=1.1129
+  [W=64, lr=0.1  ] epoch 30/50  train_loss=0.9704  test_loss=1.0271
+  [W=64, lr=0.1  ] epoch 31/50  train_loss=0.8789  test_loss=1.4231
+  [W=64, lr=0.1  ] epoch 32/50  train_loss=0.8308  test_loss=1.0578
+  [W=64, lr=0.1  ] epoch 33/50  train_loss=0.7169  test_loss=0.7382
+  [W=64, lr=0.1  ] epoch 34/50  train_loss=0.6382  test_loss=0.6386
+  [W=64, lr=0.1  ] epoch 35/50  train_loss=0.5496  test_loss=0.5021
+  [W=64, lr=0.1  ] epoch 36/50  train_loss=0.4440  test_loss=0.9631
+  [W=64, lr=0.1  ] epoch 37/50  train_loss=0.4125  test_loss=0.6626
+  [W=64, lr=0.1  ] epoch 38/50  train_loss=0.3398  test_loss=0.4830
+  [W=64, lr=0.1  ] epoch 39/50  train_loss=0.3249  test_loss=0.3756
+  [W=64, lr=0.1  ] epoch 40/50  train_loss=0.2899  test_loss=0.5665
+  [W=64, lr=0.1  ] epoch 41/50  train_loss=0.2660  test_loss=0.2865
+  [W=64, lr=0.1  ] epoch 42/50  train_loss=0.2404  test_loss=0.5326
+  [W=64, lr=0.1  ] epoch 43/50  train_loss=0.2268  test_loss=0.2711
+  [W=64, lr=0.1  ] epoch 44/50  train_loss=0.2169  test_loss=0.3009
+  [W=64, lr=0.1  ] epoch 45/50  train_loss=0.2066  test_loss=0.2526
+  [W=64, lr=0.1  ] epoch 46/50  train_loss=0.1859  test_loss=0.4454
+  [W=64, lr=0.1  ] epoch 47/50  train_loss=0.1937  test_loss=0.2553
+  [W=64, lr=0.1  ] epoch 48/50  train_loss=0.1745  test_loss=0.2455
+  [W=64, lr=0.1  ] epoch 49/50  train_loss=0.1623  test_loss=0.3197
+  [W=64, lr=0.1  ] epoch 50/50  train_loss=0.1594  test_loss=0.2271
+  ==> W=64, lr=0.1: final test accuracy = 0.9389
+
+Saved lab02/results/loss_curves.png
+
+   W      lr  final train loss  final test loss  test acc
+  16   0.001            2.3026           2.3026    0.1019
+  16    0.01            2.3026           2.3025    0.1019
+  16     0.1            1.5656           1.6237    0.3259
+  64   0.001            2.3025           2.3025    0.1019
+  64    0.01            2.3025           2.3023    0.1019
+  64     0.1            0.1594           0.2271    0.9389
+
+======================================================================
+Task 7: Timing (median of 100 runs)
+======================================================================
+Widths 16 and 64 are the lab networks; 256 and 1024 are added only to
+show the trend as matrix multiplication takes over.
+'matmul' columns time just the matrix products of each pass.
+
+    W  batch    fwd us    bwd us  bwd/fwd  fwd mm us  bwd mm us       MACs fwd       MACs bwd MAC ratio
+   16     32      17.0      18.2     1.07        5.4        8.3         46,080         59,392      1.29
+   16   1257     319.8     409.4     1.28      212.6      299.3      1,810,080      2,332,992      1.29
+   64     32      35.9      43.9     1.22       18.5       29.3        282,624        434,176      1.54
+   64   1257     717.6     966.9     1.35      462.9      697.4     11,101,824     17,054,976      1.54
+  256     32     229.0     337.1     1.47      127.8      200.2      2,703,360      4,882,432      1.81
+  256   1257    4211.0    6615.4     1.57     2946.7     5111.9    106,191,360    191,788,032      1.81
+ 1024     32    1250.5    2904.1     2.32     1070.7     3157.1     35,979,264     69,861,376      1.94
+ 1024   1257   34809.1   59447.1     1.71    27807.5    53424.5  1,413,310,464  2,744,242,176      1.94
+
+Saved lab02/results/results.json

@@ -15,3 +15,4 @@ Note: `pyarrow` is pinned to 15.0.2 instead of 16.1.0 because `mlflow==2.14.1` r
 ## Labs
 
 - [lab01](lab01/report.md) — environment and first system measurements
+- [lab02](lab02/report.md) — a two-hidden-layer neural network from scratch in NumPy (forward, backprop, gradient check, training, timing)
