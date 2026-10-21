@@ -10,6 +10,7 @@ Outputs go to lab03/results/ (tradeoffs.png, results.json, log.txt).
 import copy
 import json
 import statistics
+import sys
 import time
 from pathlib import Path
 
@@ -219,9 +220,25 @@ def plot(results):
     fig.savefig(RESULTS_DIR / "tradeoffs.png", dpi=150)
 
 
+class Tee:
+    """Write console output to both stdout and results/log.txt."""
+
+    def __init__(self, *streams):
+        self.streams = streams
+
+    def write(self, text):
+        for s in self.streams:
+            s.write(text)
+
+    def flush(self):
+        for s in self.streams:
+            s.flush()
+
+
 def main():
     torch.set_num_threads(4)
     RESULTS_DIR.mkdir(exist_ok=True)
+    sys.stdout = Tee(sys.__stdout__, open(RESULTS_DIR / "log.txt", "w"))
     train_dl, val_dl, test_dl = get_loaders()
     hand = hand_flops()
     results = {}
