@@ -24,7 +24,7 @@ I implemented the architectures exactly as specified. None of them lands in the 
 
 ### 3.1 Hand-calculated FLOPs (batch 1, FLOPs = 2 × MACs)
 
-The calculations were first done by hand on paper (21.10.2026). Photos: [page 1: formulas, per-layer params and FLOPs](hand_calculations/1_flops_and_params.jpg), [page 2: summary](hand_calculations/2_summary.jpg). The tables below are typed up from those pages.
+The calculations were first done by hand on paper. Photos: [page 1: formulas, per-layer params and FLOPs](hand_calculations/1_flops_and_params.jpg), [page 2: summary](hand_calculations/2_summary.jpg). The tables below are typed up from those pages.
 
 **MLP (Linear: 2 × in × out)**
 
