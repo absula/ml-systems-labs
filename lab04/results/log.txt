@@ -1,0 +1,24 @@
+=== 2. Ingestion ===
+Ingested: 48842 rows x 15 columns  (OpenML id 1590, license Public)
+
+=== 3. Validation ===
+  [warning] consistency      relationship/sex             4
+  [warning] suspicious_value capital-gain                 244
+  [   info] suspicious_value hours-per-week               137
+  [warning] duplicates       *                            52
+Schema errors: 0 (rows are reported, not dropped)
+
+=== 4-5. Split, clean, features, baseline ===
+Split 70/30 stratified: train 34189 -> 34165 after dropping 24 exact duplicates; test 14653 (untouched, 5 duplicates kept, 24 test rows also appear in train)
+Positive rate: train 0.2394, test 0.2393
+LogReg [ original 14]  inputs=105  test acc=0.8540  F1=0.6601
+LogReg [with derived]  inputs=107  test acc=0.8578  F1=0.6696
+
+=== 6. Label quality ===
+Label audit: 54 duplicate feature groups, 5 with conflicting labels (10 rows); without fnlwgt: 1029 groups (3873 rows)
+50-row dictionary check: 0 rows flagged; full data: 5 rows flagged
+
+=== 7. Hashing and config ===
+Processed train [34165, 108] sha256=8ca18e7745f7c765b7799acbacbd32ae629a6e3dcfc8cfc29e3ae95a16090c6b
+Processed test  [14653, 108] sha256=2f96451ec7c49d28a481fc4fed0ea936fec0363d40a13bba0026a4550513c098
+Reproducibility check vs previous run: MATCH (ba64a322bed6f35b97c41eba372f05722cf4608d1bb3169c92aa37a8a70fcbeb)

@@ -1,0 +1,73 @@
+config:
+  seed: 42
+  dataset:
+    name: adult
+    version: 2
+    target: income
+    positive_label: '>50K'
+  split:
+    test_size: 0.3
+    stratify: true
+  cleaning:
+    missing_token: '?'
+    numeric_impute: median
+    categorical_impute: most_frequent
+    clip_percentiles:
+    - 1
+    - 99
+    drop_train_duplicates: true
+  features:
+    derived:
+    - capital_net
+    - hours_per_age
+  baseline:
+    model: LogisticRegression
+    max_iter: 2000
+  label_audit:
+    sample_size: 50
+environment:
+  python: 3.11.8
+  pandas: 2.2.2
+  numpy: 1.26.4
+  scikit-learn: 1.5.0
+  joblib: 1.4.2
+  pyyaml: 6.0.1
+ingestion:
+  rows: 48842
+  columns: 15
+  openml_id: 1590
+  raw_sha256: 8f970e20c9991979ec0a9ccb65ce97543d678709a2c6f8ef23f7fb32f40adddc
+split:
+  train_rows_before_dedup: 34189
+  train_duplicates_dropped: 24
+  train_rows: 34165
+  test_rows: 14653
+  test_duplicates_kept: 5
+  test_rows_also_in_train: 24
+  train_pos_rate: 0.23936777403775794
+  test_pos_rate: 0.23926840919948134
+processed_data:
+  train:
+    path: data/adult/processed_train.csv
+    shape:
+    - 34165
+    - 108
+    sha256: 8ca18e7745f7c765b7799acbacbd32ae629a6e3dcfc8cfc29e3ae95a16090c6b
+  test:
+    path: data/adult/processed_test.csv
+    shape:
+    - 14653
+    - 108
+    sha256: 2f96451ec7c49d28a481fc4fed0ea936fec0363d40a13bba0026a4550513c098
+  combined_sha256: ba64a322bed6f35b97c41eba372f05722cf4608d1bb3169c92aa37a8a70fcbeb
+baseline:
+- features: original 14
+  n_inputs: 105
+  test_accuracy: 0.854
+  test_f1: 0.6601
+  train_accuracy: 0.8513
+- features: with derived
+  n_inputs: 107
+  test_accuracy: 0.8578
+  test_f1: 0.6696
+  train_accuracy: 0.8542

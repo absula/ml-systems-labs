@@ -1,0 +1,21 @@
+{
+  "duplicate_feature_groups": 54,
+  "conflicting_label_groups_14_features": {
+    "groups": 5,
+    "rows": 10
+  },
+  "conflicting_label_groups_without_fnlwgt": {
+    "groups": 1029,
+    "rows": 3873
+  },
+  "sample_rows_checked": 50,
+  "sample_rows_flagged": 0,
+  "sample_flags": {},
+  "sample_rows_with_missing_token": 3,
+  "full_data_rows_flagged": 5,
+  "full_data_flag_counts": {
+    "Wife but not Female": 3,
+    "Husband but not Male": 1,
+    "too young for education level": 1
+  }
+}

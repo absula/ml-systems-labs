@@ -1,0 +1,29 @@
+# Lab 4 pipeline configuration. Every number in the report comes from this file.
+seed: 42
+
+dataset:
+  name: adult
+  version: 2
+  target: income          # OpenML calls this column "class"; renamed on ingestion
+  positive_label: ">50K"
+
+split:
+  test_size: 0.30
+  stratify: true
+
+cleaning:
+  missing_token: "?"
+  numeric_impute: median
+  categorical_impute: most_frequent
+  clip_percentiles: [1, 99]
+  drop_train_duplicates: true
+
+features:
+  derived: [capital_net, hours_per_age]
+
+baseline:
+  model: LogisticRegression
+  max_iter: 2000
+
+label_audit:
+  sample_size: 50

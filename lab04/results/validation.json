@@ -1,0 +1,451 @@
+[
+  {
+    "check": "columns",
+    "column": "*",
+    "rule": "exactly the 15 schema columns",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "type",
+    "column": "age",
+    "rule": "integer dtype",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "allowed_values",
+    "column": "workclass",
+    "rule": "value in data dictionary (incl. '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "type",
+    "column": "fnlwgt",
+    "rule": "integer dtype",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "allowed_values",
+    "column": "education",
+    "rule": "value in data dictionary (incl. '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "type",
+    "column": "education-num",
+    "rule": "integer dtype",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "allowed_values",
+    "column": "marital-status",
+    "rule": "value in data dictionary (incl. '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "allowed_values",
+    "column": "occupation",
+    "rule": "value in data dictionary (incl. '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "allowed_values",
+    "column": "relationship",
+    "rule": "value in data dictionary (incl. '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "allowed_values",
+    "column": "race",
+    "rule": "value in data dictionary (incl. '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "allowed_values",
+    "column": "sex",
+    "rule": "value in data dictionary (incl. '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "type",
+    "column": "capital-gain",
+    "rule": "integer dtype",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "type",
+    "column": "capital-loss",
+    "rule": "integer dtype",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "type",
+    "column": "hours-per-week",
+    "rule": "integer dtype",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "allowed_values",
+    "column": "native-country",
+    "rule": "value in data dictionary (incl. '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "allowed_values",
+    "column": "income",
+    "rule": "value in data dictionary",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "range",
+    "column": "age",
+    "rule": "17 <= x <= 90",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "range",
+    "column": "hours-per-week",
+    "rule": "1 <= x <= 99",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "range",
+    "column": "capital-gain",
+    "rule": "0 <= x <= 99999",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "range",
+    "column": "capital-loss",
+    "rule": "0 <= x <= 4356",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "range",
+    "column": "education-num",
+    "rule": "1 <= x <= 16",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "range",
+    "column": "fnlwgt",
+    "rule": "x > 0",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "null",
+    "column": "age",
+    "rule": "no NaN (missing must be '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "null",
+    "column": "workclass",
+    "rule": "no NaN (missing must be '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "null",
+    "column": "fnlwgt",
+    "rule": "no NaN (missing must be '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "null",
+    "column": "education",
+    "rule": "no NaN (missing must be '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "null",
+    "column": "education-num",
+    "rule": "no NaN (missing must be '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "null",
+    "column": "marital-status",
+    "rule": "no NaN (missing must be '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "null",
+    "column": "occupation",
+    "rule": "no NaN (missing must be '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "null",
+    "column": "relationship",
+    "rule": "no NaN (missing must be '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "null",
+    "column": "race",
+    "rule": "no NaN (missing must be '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "null",
+    "column": "sex",
+    "rule": "no NaN (missing must be '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "null",
+    "column": "capital-gain",
+    "rule": "no NaN (missing must be '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "null",
+    "column": "capital-loss",
+    "rule": "no NaN (missing must be '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "null",
+    "column": "hours-per-week",
+    "rule": "no NaN (missing must be '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "null",
+    "column": "native-country",
+    "rule": "no NaN (missing must be '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "null",
+    "column": "income",
+    "rule": "no NaN (missing must be '?')",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "missing_token",
+    "column": "workclass",
+    "rule": "count of '?'",
+    "severity": "info",
+    "violations": 2799,
+    "example_rows": [
+      4,
+      6,
+      13,
+      22,
+      35
+    ]
+  },
+  {
+    "check": "missing_token",
+    "column": "education",
+    "rule": "count of '?'",
+    "severity": "info",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "missing_token",
+    "column": "marital-status",
+    "rule": "count of '?'",
+    "severity": "info",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "missing_token",
+    "column": "occupation",
+    "rule": "count of '?'",
+    "severity": "info",
+    "violations": 2809,
+    "example_rows": [
+      4,
+      6,
+      13,
+      22,
+      35
+    ]
+  },
+  {
+    "check": "missing_token",
+    "column": "relationship",
+    "rule": "count of '?'",
+    "severity": "info",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "missing_token",
+    "column": "race",
+    "rule": "count of '?'",
+    "severity": "info",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "missing_token",
+    "column": "sex",
+    "rule": "count of '?'",
+    "severity": "info",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "missing_token",
+    "column": "native-country",
+    "rule": "count of '?'",
+    "severity": "info",
+    "violations": 857,
+    "example_rows": [
+      19,
+      65,
+      83,
+      188,
+      253
+    ]
+  },
+  {
+    "check": "consistency",
+    "column": "education/education-num",
+    "rule": "education-num matches education level",
+    "severity": "error",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "consistency",
+    "column": "relationship/sex",
+    "rule": "Husband => Male, Wife => Female",
+    "severity": "warning",
+    "violations": 4,
+    "example_rows": [
+      5661,
+      16856,
+      23390,
+      43422
+    ]
+  },
+  {
+    "check": "consistency",
+    "column": "relationship/marital-status",
+    "rule": "Husband/Wife => Married-*",
+    "severity": "warning",
+    "violations": 0,
+    "example_rows": []
+  },
+  {
+    "check": "suspicious_value",
+    "column": "capital-gain",
+    "rule": "99999 is a top-code / sentinel",
+    "severity": "warning",
+    "violations": 244,
+    "example_rows": [
+      83,
+      346,
+      357,
+      418,
+      692
+    ]
+  },
+  {
+    "check": "suspicious_value",
+    "column": "hours-per-week",
+    "rule": "99 hours is a top-code",
+    "severity": "info",
+    "violations": 137,
+    "example_rows": [
+      384,
+      901,
+      1121,
+      1156,
+      1649
+    ]
+  },
+  {
+    "check": "duplicates",
+    "column": "*",
+    "rule": "exact duplicate rows (all 15 columns)",
+    "severity": "warning",
+    "violations": 52,
+    "example_rows": [
+      864,
+      11189,
+      11212,
+      13848,
+      15960
+    ]
+  }
+]
