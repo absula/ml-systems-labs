@@ -1,0 +1,97 @@
+python 3.11.8, torch 2.3.1, macOS-26.6.2-arm64-arm-64bit
+
+=== 1-3. Engine: graph construction and gradient accumulation ===
+Graph built in the forward pass (topological order):
+       c  data=10     parents=[]
+       b  data=-3     parents=[]
+       a  data=2      parents=[]
+       *  data=-6     parents=[2, -3]
+       +  data=4      parents=[-6, 10]
+     **2  data=16     parents=[4]
+    relu  data=16     parents=[16]
+out = 16;  da = -24, db = 16, dc = 8
+accumulation check: y = x*x + x at x=3 -> dy/dx = 7 (expected 7)
+
+=== 4. Gradient check: ((a*b + c)**2).relu().sum() ===
+forward: engine 14.510277267615   torch 14.510277267615
+d/da[:3]  engine [ 0.25790985  0.11248966 10.01714885]  torch [ 0.25790985  0.11248966 10.01714885]
+d/db[:3]  engine [-0.05202694 -0.35959052 -2.75919316]  torch [-0.05202694 -0.35959052 -2.75919316]
+d/dc[:3]  engine [-0.4137982   2.72200822 -4.30839409]  torch [-0.4137982   2.72200822 -4.30839409]
+max |engine - torch|      = 0.000e+00
+max |engine - numerical|  = 1.011e-09
+max |torch  - numerical|  = 1.011e-09
+PASS: both differences < 1e-6
+
+=== 5. make_moons: 2 -> 8 -> 1, sigmoid + BCE, full-batch SGD (lr 0.5, 300 epochs, 200 samples) ===
+run 1: engine 32.445 s   torch 0.036 s
+run 2: engine 32.908 s   torch 0.036 s
+run 3: engine 37.983 s   torch 0.037 s
+run 4: engine 32.940 s   torch 0.036 s
+run 5: engine 32.666 s   torch 0.036 s
+median training time: engine 32.908 s, torch 0.036 s  -> torch is 906x faster
+final loss: engine 0.102466, torch 0.102466; max |loss diff| over all epochs = 1.99e-12
+train accuracy: engine 0.970, torch 0.970
+engine graph size per epoch: 28,403 scalar nodes
+
+=== 6. PyTorch: graph, eager vs compiled, tensor layout ===
+
+-- 6a. Dynamic autograd graph (grad_fn chain of model(x).sum()) --
+  SumBackward0
+    AddmmBackward0
+      AccumulateGrad  -> leaf (10,)
+      ReluBackward0
+        AddmmBackward0
+          AccumulateGrad  -> leaf (256,)
+          ReluBackward0
+            AddmmBackward0
+              AccumulateGrad  -> leaf (256,)
+              TBackward0
+                AccumulateGrad  -> leaf (256, 64)
+          TBackward0
+            AccumulateGrad  -> leaf (256, 256)
+      TBackward0
+        AccumulateGrad  -> leaf (10, 256)
+
+-- 6b. Static graph from torch.fx.symbolic_trace --
+graph():
+    %x : [num_users=1] = placeholder[target=x]
+    %fc1 : [num_users=1] = call_module[target=fc1](args = (%x,), kwargs = {})
+    %relu : [num_users=1] = call_function[target=torch.relu](args = (%fc1,), kwargs = {})
+    %fc2 : [num_users=1] = call_module[target=fc2](args = (%relu,), kwargs = {})
+    %relu_1 : [num_users=1] = call_function[target=torch.relu](args = (%fc2,), kwargs = {})
+    %fc3 : [num_users=1] = call_module[target=fc3](args = (%relu_1,), kwargs = {})
+    return fc3
+
+-- 6c. Eager vs compiled / traced (CPU, 4 threads, inference_mode, median of 50 after warm-up) --
+torch.compile first call (compilation): 0.98 s
+ batch           eager       jit.trace   torch.compile
+     1         22.9 us         17.3 us         25.8 us
+    32         32.6 us         26.7 us         38.7 us
+  1024        314.9 us        328.8 us        278.5 us
+
+training step (forward + backward + SGD), batch 256:
+           eager: 393.5 us
+   torch.compile: 406.2 us
+
+pointwise chain (x*sigmoid(x) + 0.5*tanh(x))*1.7 - 0.1*x^2 on 4M floats:
+           eager: 17.20 ms
+   torch.compile: 9.71 ms
+  speed-up from fusion: 1.8x
+
+-- 6d. Tensor representation and contiguity --
+  big                    shape=(4096, 4096) dtype=torch.float32 stride=(4096, 1) contiguous=True shares_storage=True
+  big.t()                shape=(4096, 4096) dtype=torch.float32 stride=(1, 4096) contiguous=False shares_storage=True
+  big[:, ::2]            shape=(4096, 2048) dtype=torch.float32 stride=(4096, 2) contiguous=False shares_storage=True
+  big.t().contiguous()   shape=(4096, 4096) dtype=torch.float32 stride=(4096, 1) contiguous=True shares_storage=False
+
+  operation speed, contiguous vs non-contiguous view of a 4096x4096 float32 tensor (median of 20):
+  op                          contiguous   .t() view     ratio
+  x + 1 (elementwise)           3.918 ms    3.892 ms      1.0x
+  x.sum(dim=1)                  1.118 ms    3.157 ms      2.8x
+  x.exp()                       8.724 ms    8.809 ms      1.0x
+  x @ W (4096x256)             11.031 ms   16.477 ms      1.5x
+  x.reshape(-1)                 0.001 ms   23.148 ms  29227.2x
+  one-off .contiguous() copy of the view: 23.16 ms
+  nc.view(-1) fails: view size is not compatible with input tensor's size and stride (at least one dimension sp...
+
+Saved results to /Users/sultanabil/Desktop/ml-lab-73971/lab05/results

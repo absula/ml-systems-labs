@@ -1,0 +1,156 @@
+{
+  "engine_demo": {
+    "demo_grads": [
+      -24.0,
+      16.0,
+      8.0
+    ],
+    "accumulation_dx": 7.0
+  },
+  "gradient_check": {
+    "n_elements": 10,
+    "forward_engine": 14.510277267614573,
+    "forward_torch": 14.510277267614569,
+    "max_abs_diff_engine_vs_torch": 0.0,
+    "max_abs_diff_engine_vs_numerical": 1.0111032011650423e-09,
+    "max_abs_diff_torch_vs_numerical": 1.0111032011650423e-09
+  },
+  "moons": {
+    "times_engine_s": [
+      32.4453167089996,
+      32.9082349170003,
+      37.98318695800026,
+      32.940486082999996,
+      32.66647670799921
+    ],
+    "times_torch_s": [
+      0.036485124999671825,
+      0.03633045900005527,
+      0.037212541999906534,
+      0.03556708399992203,
+      0.0358979590000672
+    ],
+    "median_engine_s": 32.9082349170003,
+    "median_torch_s": 0.03633045900005527,
+    "speedup_torch": 905.8028943964136,
+    "final_loss_engine": 0.10246614364794483,
+    "final_loss_torch": 0.10246614364865451,
+    "max_abs_loss_diff": 1.9944046414366312e-12,
+    "acc_engine": 0.97,
+    "acc_torch": 0.97,
+    "engine_nodes_per_epoch": 28403
+  },
+  "pytorch": {
+    "jit_trace_build_s": 0.07655404199977056,
+    "compile_first_call_s": 0.9799767920003433,
+    "inference_ms": {
+      "1": {
+        "eager": 0.022917000023880973,
+        "jit.trace": 0.017250000382773578,
+        "torch.compile": 0.025791500320337946
+      },
+      "32": {
+        "eager": 0.032625000130792614,
+        "jit.trace": 0.02670800040505128,
+        "torch.compile": 0.038749999475840013
+      },
+      "1024": {
+        "eager": 0.31491649997406057,
+        "jit.trace": 0.32877049989110674,
+        "torch.compile": 0.2784795001389284
+      }
+    },
+    "train_step_ms": {
+      "eager": 0.3934995002055075,
+      "torch.compile": 0.4061670001647144
+    },
+    "pointwise_chain_ms": {
+      "eager": 17.203166500166844,
+      "torch.compile": 9.70741650007767
+    },
+    "layout": {
+      "big": {
+        "shape": [
+          4096,
+          4096
+        ],
+        "dtype": "torch.float32",
+        "stride": [
+          4096,
+          1
+        ],
+        "contiguous": true,
+        "shares_storage": true
+      },
+      "big.t()": {
+        "shape": [
+          4096,
+          4096
+        ],
+        "dtype": "torch.float32",
+        "stride": [
+          1,
+          4096
+        ],
+        "contiguous": false,
+        "shares_storage": true
+      },
+      "big[:, ::2]": {
+        "shape": [
+          4096,
+          2048
+        ],
+        "dtype": "torch.float32",
+        "stride": [
+          4096,
+          2
+        ],
+        "contiguous": false,
+        "shares_storage": true
+      },
+      "big.t().contiguous()": {
+        "shape": [
+          4096,
+          4096
+        ],
+        "dtype": "torch.float32",
+        "stride": [
+          4096,
+          1
+        ],
+        "contiguous": true,
+        "shares_storage": false
+      }
+    },
+    "noncontiguous_speed": {
+      "x + 1 (elementwise)": {
+        "contiguous_ms": 3.9177709995783516,
+        "noncontiguous_ms": 3.891645499606966,
+        "ratio": 0.9933315398030673
+      },
+      "x.sum(dim=1)": {
+        "contiguous_ms": 1.1178125000697037,
+        "noncontiguous_ms": 3.1572079997204128,
+        "ratio": 2.8244522221066037
+      },
+      "x.exp()": {
+        "contiguous_ms": 8.72364600036235,
+        "noncontiguous_ms": 8.80900050060518,
+        "ratio": 1.0097842691277574
+      },
+      "x @ W (4096x256)": {
+        "contiguous_ms": 11.030937499981519,
+        "noncontiguous_ms": 16.476979500112066,
+        "ratio": 1.493706178657949
+      },
+      "x.reshape(-1)": {
+        "contiguous_ms": 0.000791999809734989,
+        "noncontiguous_ms": 23.147916499965504,
+        "ratio": 29227.174319285543
+      },
+      "cost of .contiguous() copy": {
+        "ms": 23.158479499670648
+      }
+    }
+  }
+}
